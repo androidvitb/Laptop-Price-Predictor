@@ -4,7 +4,7 @@ This project focuses on analyzing laptop prices using a dataset of 1,300 laptop 
 
 ---
 
-## **Business Problem**
+## **Dataset Overview**
 The application predicts laptop prices using a dataset of 1,300 laptop models. The dataset includes:
 
 - Company Name  
