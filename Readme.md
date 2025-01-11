@@ -3,6 +3,9 @@
 This project focuses on analyzing laptop prices using a dataset of 1,300 laptop models. Through exploratory data analysis and the application of machine learning algorithms, it aims to uncover patterns and predict prices based on various configurations.
 
 ---
+### **Repository Under**: AcWoC'25  
+### **Club**: Android Club, VIT Bhopal University  
+---
 
 ## **Dataset Overview**
 The application predicts laptop prices using a dataset of 1,300 laptop models. The dataset includes:
