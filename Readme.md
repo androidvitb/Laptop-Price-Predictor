@@ -23,7 +23,20 @@ The application predicts laptop prices using a dataset of 1,300 laptop models. T
 - Price  
 
 ---
+## **Modules Required** 
+Installation of the following moldules is required beforehand:
 
+- numpy
+- pandas
+- seaborn
+- matplotlib
+- sklearn
+- xgboost
+- pickle
+  
+To install them, open a new terminal and run the command: pip install <module_name>
+
+---
 ## **Approach and Methodologies**
 The project employs both supervised and unsupervised machine learning algorithms for analysis and predictions. The following algorithms have been implemented:
 
