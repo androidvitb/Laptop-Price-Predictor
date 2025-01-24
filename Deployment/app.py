@@ -85,7 +85,7 @@ st.divider()
 
 #Predict button
 if st.button("Predict Price"):
-    #try:
+    try:
         loaded_encoder=load_encoder()
         loaded_scaler=load_scaler()
         encoded_data = loaded_encoder.transform(input_array[[0,1,7,10,11]].reshape(1, -1))
@@ -95,5 +95,5 @@ if st.button("Predict Price"):
         model=Load_Model()
         prediction=np.e**(model.predict(scaled_data))
         st.success(f"Predicted Laptop Price:   {prediction[0][0]}")
-    # except Exception as e:
-    #     st.error(f"An error occurred: {e}")
+    except Exception as e:
+        st.error(f"An error occurred: {e}")
