@@ -23,77 +23,110 @@ def load_scaler():
         model = pickle.load(file)
     return model
 
-# Page Title
-st.title("💻Laptop Price Prediction 💻")
-st.sidebar.header("Input Features")
+# --- PAGE CONFIG ---
+st.set_page_config(page_title="Laptop Price Predictor", page_icon="💻", layout="wide")
 
-company = st.sidebar.selectbox("Company", ['Apple', 'HP', 'Acer', 'Asus', 'Dell', 'Lenovo', 'Chuwi', 'MSI',
+# --- MAIN TITLE ---
+st.markdown(
+    "<h1 style='text-align: center; color: #3366cc;'>💻 Laptop Price Prediction 💻</h1>", 
+    unsafe_allow_html=True
+)
+st.write("🚀 **Enter the laptop specifications to estimate its price.**")
+
+
+# --- SIDEBAR INPUTS ---
+st.sidebar.header("🔧 Laptop Features")
+
+company = st.sidebar.selectbox("🏢 Brand", ['Apple', 'HP', 'Acer', 'Asus', 'Dell', 'Lenovo', 'Chuwi', 'MSI',
                                             'Microsoft', 'Toshiba', 'Huawei', 'Xiaomi', 'Vero', 'Mediacom',
                                             'Samsung', 'Google', 'Fujitsu', 'Razer', 'LG'])
-type_name = st.sidebar.selectbox("Type", ['Ultrabook', 'Notebook', 'Netbook', 'Gaming', '2 in 1 Convertible','Workstation'])
-cpu_brand = st.sidebar.selectbox("CPU Brand", ['Intel Core i5', 'Intel Core i7', 'AMD Processor', 'Intel Core i3','Other Intel Processor'])
-gpu_brand = st.sidebar.selectbox("GPU Brand", ['Intel', 'AMD', 'Nvidia'])
-os = st.sidebar.selectbox("Operating System", ['Mac', 'Others/No OS/Linux', 'Windows'])
+type_name = st.sidebar.selectbox("💻 Type", ['Ultrabook', 'Notebook', 'Netbook', 'Gaming', '2 in 1 Convertible', 'Workstation'])
+cpu_brand = st.sidebar.selectbox("🖥️ CPU", ['Intel Core i5', 'Intel Core i7', 'AMD Processor', 'Intel Core i3', 'Other Intel Processor'])
+gpu_brand = st.sidebar.selectbox("🎮 GPU", ['Intel', 'AMD', 'Nvidia'])
+os = st.sidebar.selectbox("🖥️ Operating System", ['Mac', 'Others/No OS/Linux', 'Windows'])
 
-ram = st.sidebar.slider("RAM (GB)", 2, 64, step=1)
-weight = st.sidebar.number_input("Weight (kg)", min_value=0.5, max_value=5.0, value=2.0, step=0.1)
-ppi = st.sidebar.number_input("PPI (Pixels per Inch)", min_value=80.0, max_value=400.0, value=120.0, step=10.0)
+ram = st.sidebar.slider("📏 RAM (GB)", 2, 64, step=1)
+weight = st.sidebar.number_input("⚖️ Weight (kg)", min_value=0.5, max_value=5.0, value=2.0, step=0.1)
+ppi = st.sidebar.number_input("🖥️ PPI (Pixels per Inch)", min_value=80.0, max_value=400.0, value=120.0, step=10.0)
 
-touchscreen = st.sidebar.selectbox("Touchscreen", ["No", "Yes"])
-ips = st.sidebar.selectbox("IPS Display", ["No", "Yes"])
-hdd = st.sidebar.number_input("HDD", min_value=0, max_value=5000, value=512, step=1)
-ssd = st.sidebar.number_input("SSD", min_value=0, max_value=5000, value=512, step=1)
-
+touchscreen = st.sidebar.radio("📱 Touchscreen", ["No", "Yes"])
+ips = st.sidebar.radio("🎨 IPS Display", ["No", "Yes"])
+hdd = st.sidebar.slider("🛠 HDD (GB)", min_value=0, max_value=5000, value=512, step=256)
+ssd = st.sidebar.slider("⚡ SSD (GB)", min_value=0, max_value=5000, value=512, step=256)
 
 # Convert categorical data to numeric
 input_data = {
     "Company": company,
     "TypeName": type_name,
-    "CPU Brand": cpu_brand,
-    "GPU Brand": gpu_brand,
-    "OS": os,
     "RAM": ram,
     "Weight": weight,
-    "PPI": ppi,
     "TouchScreen": 1 if touchscreen == "Yes" else 0,
     "IPS": 1 if ips == "Yes" else 0,
+    "PPI": ppi,
+    "CPU Brand": cpu_brand,
     "HDD": hdd,
     "SSD": ssd,
+    "GPU Brand": gpu_brand,
+    "OS": os,
 }
 
-# Prepare data for prediction
-input_array = np.array([
-    input_data["Company"],
-    input_data["TypeName"],
-    input_data["RAM"],
-    input_data["Weight"],
-    input_data["TouchScreen"],
-    input_data["IPS"],
-    input_data["PPI"],
-    input_data["CPU Brand"],
-    input_data["HDD"],
-    input_data["SSD"],
-    input_data["GPU Brand"],
-    input_data["OS"],
-    ])
-
-st.divider()
+# --- DISPLAY INPUT DATA ---
+st.subheader("📝 Selected Features")
+st.write("Here are the details of the laptop you have selected:")
 df = pd.DataFrame([input_data])
 st.table(df)
-st.divider()
 
-
-#Predict button
-if st.button("Predict Price"):
+# --- PREDICTION ---
+if st.button("🔮 Predict Price"):
     try:
-        loaded_encoder=load_encoder()
-        loaded_scaler=load_scaler()
-        encoded_data = loaded_encoder.transform(input_array[[0,1,7,10,11]].reshape(1, -1))
-        num=input_array[[2,3,4,5,6,8,9]]
-        X=np.hstack([encoded_data[0],num])
-        scaled_data = loaded_scaler.transform([X])
-        model=Load_Model()
-        prediction=np.e**(model.predict(scaled_data))
-        st.success(f"Predicted Laptop Price:   {prediction[0][0]}")
+        with st.spinner("⏳ Predicting the price... Please wait!"):
+            # Load necessary components
+            loaded_encoder = load_encoder()
+            loaded_scaler = load_scaler()
+
+            # Extract categorical features to be encoded
+            categorical_features = np.array([
+                input_data["Company"], 
+                input_data["TypeName"], 
+                input_data["CPU Brand"], 
+                input_data["GPU Brand"], 
+                input_data["OS"]
+            ]).reshape(1, -1)
+
+            # Apply encoding
+            encoded_data = loaded_encoder.transform(categorical_features)
+
+            # Extract numerical features
+            numerical_features = np.array([
+                input_data["RAM"], 
+                input_data["Weight"], 
+                input_data["TouchScreen"], 
+                input_data["IPS"], 
+                input_data["PPI"], 
+                input_data["HDD"], 
+                input_data["SSD"]
+            ]).reshape(1, -1).astype(float)
+
+            # Combine encoded and numerical features
+            X = np.hstack([encoded_data, numerical_features])
+
+            # Apply scaling
+            scaled_data = loaded_scaler.transform(X)
+
+            # Load model and make prediction
+            model = Load_Model()
+            prediction = np.exp(model.predict(scaled_data))  # Reverse log transformation
+
+        st.success(f"💰 Predicted Laptop Price:   **${prediction[0][0]:,.2f}**")
+
     except Exception as e:
-        st.error(f"An error occurred: {e}")
+        st.error("🚨 An error occurred during prediction.")
+        st.text(f"🔍 Debugging Info: {type(e).__name__} - {str(e)}")
+
+# --- FOOTER ---
+st.markdown("""
+    <br><hr>
+    <p style="text-align:center; color:gray;">
+        Made with ❤️ by <b>AcWoc</b> | Powered by <b>Streamlit & TensorFlow</b>
+    </p>
+""", unsafe_allow_html=True)
