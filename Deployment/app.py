@@ -4,6 +4,12 @@ import pickle
 import pandas as pd
 from sklearn.preprocessing import OneHotEncoder
 from tensorflow.keras.models import load_model
+import requests
+from bs4 import BeautifulSoup
+import pandas as pd
+from itertools import zip_longest
+from Flipkart_fetch import get_flipkart_laptop
+
 
 # Load the trained model
 @st.cache_resource
@@ -118,6 +124,10 @@ if st.button("🔮 Predict Price"):
             prediction = np.exp(model.predict(scaled_data))  # Reverse log transformation
 
         st.success(f"💰 Predicted Laptop Price:   **${prediction[0][0]:,.2f}**")
+        st.divider()
+
+        st.subheader("View Product in Flipkart")
+        st.dataframe(get_flipkart_laptop(int(prediction)))
 
     except Exception as e:
         st.error("🚨 An error occurred during prediction.")
